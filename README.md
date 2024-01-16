@@ -1,1 +1,1 @@
-# mini-wallet
+# Mini Wallet
