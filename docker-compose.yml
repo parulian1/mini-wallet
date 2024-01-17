@@ -1,0 +1,33 @@
+version: '2.1'
+
+services:
+  db:
+    image: postgres:12
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=dev
+      - POSTGRES_USER=dev
+      - POSTGRES_DB=wallet
+    ports:
+      - 5432:5432
+
+
+# table
+# - customer
+#    a. customer xid = uuid4
+#    b . etc
+# - wallet
+#    a. id uuid4
+#    b. owned_by -> customer xid
+#    c. status -> boolean
+#    d. enabled_at -> datetime
+#    e. balance -> decimal
+# - transaction
+#   a. id uuid
+#   b. created_by -> customer xid
+#   c. type -> enum -> deposit / withdraw
+#   d. reference_id uuid
+
+
+
