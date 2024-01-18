@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 
     'customer',
     'wallet',
-    'transaction',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +73,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mini-wallet.wsgi.application'
 
 # settings.py
-AUTHENTICATION_BACKENDS = ['utils.backend.IdAuthenticationBackend']
 
 
 # Database
@@ -141,20 +139,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'customer.Customer'
 
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'xid',
+}
+
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
+        'utils.custom_jwt.CustomJWTAuthentication',
+        # ... other authentication classes
     ),
-    'URL_FIELD_NAME': 'href',
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
-    'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
-    ],
-    'SEARCH_PARAM': 'q',
-    'PAGE_SIZE': 25,
-    'COERCE_DECIMAL_TO_STRING': False,
 }
