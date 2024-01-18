@@ -1,11 +1,13 @@
 from datetime import datetime
 
+from rest_framework.parsers import MultiPartParser, FormParser
+
 from customer.models import Customer
 from utils.constant import ResponseCode
 
 from utils.formatter import ApiMixin as resp
 from wallet.models import Wallet
-from wallet.serializers import WalletInitSerializer, WalletSerializer
+from wallet.serializers import WalletInitSerializer, WalletSerializer, WalletPatchSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -21,38 +23,17 @@ def api_init(request):
         'token': exist_user.access_token().get('access')
         })
 
-@api_view(['POST', 'GET', 'PATCH'])
-def api_wallet(request):
-    print(request.user)
-    user, token = JWTAuthentication().authenticate(request)
-    print(user)
-    wallet = Wallet.objects.filter(owned_by=user).first()
-    resp_code = ResponseCode.ok
-    data = {}
-    if request.method == 'POST':
-        if not wallet:
-            wallet = Wallet.objects.create(owned_by=user)
-
-        if wallet and wallet.is_active:
-            return resp.api_response(ResponseCode.error_wallet_disabled, data={
-                'error': 'wallet already active'
-            })
-        wallet.is_active = True
-        wallet.enabled_at = datetime.now()
-        wallet.save()
-    return resp.api_response(resp_code, data=data)  
-
 
 class WalletView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     def post(self, request, *args, **kwargs):
         wallet = Wallet.objects.filter(owned_by=request.user).first()
         resp_code = ResponseCode.created
-        data = {}
         if not wallet:
             wallet = Wallet.objects.create(owned_by=request.user)
 
         if wallet and wallet.is_active:
-            resp_code = ResponseCode.error_wallet_disabled
+            resp_code = ResponseCode.error_wallet_already_enabled
             data = {
                 'error': 'wallet already active'
             }
@@ -65,5 +46,51 @@ class WalletView(APIView):
                 'Wallet': wallet_serializer.data
             }
         return resp.api_response(resp_code, data=data)
+    
+    def get_object(self, request):
+        return Wallet.objects.filter(owned_by=request.user).first()
 
-        
+    def patch(self, request, *args, **kwargs):
+        # Custom logic for handling PATCH request
+        serializer = WalletPatchSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        resp_code = ResponseCode.ok
+        wallet = self.get_object(request=self.request)
+        is_disabled_req = data.get('is_disabled')
+        is_disabled = True if is_disabled_req in [True, 'true', 'TRUE', 'True'] else False
+
+        if is_disabled:
+            if not wallet.is_active:
+                resp_code = ResponseCode.error_wallet_already_disabled
+                data = {
+                    'error': 'wallet already active'
+                }
+            else:
+                wallet.is_active = False
+                wallet.save()
+                wallet_serializer = WalletSerializer(wallet)
+                data = {
+                        'Wallet': wallet_serializer.data
+                    }
+        else:
+            resp_code = ResponseCode.error_forbidden
+            data = {
+                'error': 'This method does not allowed for enable wallet'
+            }
+        return resp.api_response(resp_code, data=data)
+
+    def get(self, request, *args, **kwargs):
+        resp_code = ResponseCode.ok
+        wallet = self.get_object(request=self.request)
+        if wallet.is_active:
+            serializer = WalletSerializer(wallet)
+            data = {
+                'Wallet': serializer.data
+            }
+        else:
+            resp_code = ResponseCode.error_wallet_is_disabled
+            data = {
+                'error': 'Wallet disabled'
+            }
+        return resp.api_response(resp_code, data=data)

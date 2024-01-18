@@ -45,4 +45,7 @@ class WalletSerializer(serializers.Serializer):
             'balance',
         )
 
+class WalletPatchSerializer(serializers.Serializer):
+    is_disabled = serializers.BooleanField()
+
         
