@@ -5,9 +5,11 @@ class ResponseCode(object):
     error_auth = 'error_auth'
     error_missing_bearer = 'error_missing_bearer'
     error_token_expired = 'error_token_expired'
+    error_wallet_not_found = 'error_wallet_not_found'
     error_wallet_already_enabled = 'error_wallet_already_enabled'
     error_wallet_is_disabled = 'error_wallet_is_disabled'
     error_wallet_already_disabled = 'error_wallet_already_disabled'
+    error_wallet_insufficient_balance = 'error_wallet_insufficient_balance'
     error_user_not_found = 'error_user_not_found'
     error_param = 'error_param'
     error_sign = 'error_sign'
@@ -28,9 +30,11 @@ RESPONSE_STATUS = {
     ResponseCode.error_token_expired: status.HTTP_401_UNAUTHORIZED,
     ResponseCode.error_missing_bearer: status.HTTP_401_UNAUTHORIZED,
     ResponseCode.error_user_not_found: status.HTTP_404_NOT_FOUND,
+    ResponseCode.error_wallet_not_found: status.HTTP_404_NOT_FOUND,
     ResponseCode.error_wallet_already_enabled: status.HTTP_208_ALREADY_REPORTED,
     ResponseCode.error_wallet_is_disabled: status.HTTP_404_NOT_FOUND,
     ResponseCode.error_wallet_already_disabled: status.HTTP_404_NOT_FOUND,
+    ResponseCode.error_wallet_insufficient_balance: status.HTTP_400_BAD_REQUEST,
     ResponseCode.error_param: status.HTTP_400_BAD_REQUEST,
     ResponseCode.error_sign: status.HTTP_400_BAD_REQUEST,
     ResponseCode.error_validation_failure: status.HTTP_400_BAD_REQUEST,
@@ -49,4 +53,3 @@ RESPONSE_STATUS = {
 }
 
 VALID_RESPONSE = [ResponseCode.no_content, ResponseCode.created, ResponseCode.ok, ResponseCode.already_reported]
-

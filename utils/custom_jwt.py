@@ -3,6 +3,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication, AUTH_HEAD
 from rest_framework.exceptions import AuthenticationFailed
 from django.utils.translation import gettext as _
 
+
 class CustomJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
         header = self.get_header(request)
@@ -36,7 +37,7 @@ class CustomJWTAuthentication(JWTAuthentication):
             raise AuthenticationFailed(_('Invalid token header. Token string should not contain spaces.'))
 
         return auth_header
-    
+
     def get_raw_token(self, header: bytes) -> Optional[bytes]:
         """
         Extracts an unvalidated JSON web token from the given "Authorization"

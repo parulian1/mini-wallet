@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 
 class ApiMixin(object):
-    
+
     @staticmethod
     def api_response(code=ResponseCode.ok, data=None, message=None):
         """

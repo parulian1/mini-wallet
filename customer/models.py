@@ -22,7 +22,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self.create_user(**extra_fields)
-    
+
 
 class Customer(AbstractBaseUser, PermissionsMixin):
     xid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -37,7 +37,7 @@ class Customer(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.xid.hex
-    
+
     def full_name(self):
         return ' '.join([self.first_name, self.last_name])
 
@@ -50,7 +50,6 @@ class Customer(AbstractBaseUser, PermissionsMixin):
         token = RefreshToken.for_user(self)
 
         return token
-        
 
     def access_token(self):
         """ generate for access token when register and refresh token """

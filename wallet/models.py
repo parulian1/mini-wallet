@@ -8,7 +8,7 @@ class Wallet(models.Model):
     owned_by = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     is_active = models.BooleanField(default=False)
     enabled_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    balance = models.DecimalField(max_digits=24, decimal_places=2, default=0)
+    balance = models.IntegerField(default=0, max_length=100)
 
     def __str__(self) -> str:
         return f'{self.id} - {self.balance}'
@@ -23,3 +23,5 @@ class Transaction(models.Model):
     created_by = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     type = models.CharField(choices=TypeStatus.choices, max_length=20, default=TypeStatus.deposit)
     ref_id = models.CharField(max_length=35)
+    created_at = models.DateTimeField(auto_now_add=True)
+    amount = models.IntegerField(default=0, max_length=100)

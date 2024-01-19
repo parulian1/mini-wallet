@@ -3,7 +3,8 @@ from rest_framework import serializers, status
 
 from customer.models import Customer
 from utils.validator import ValidationError
-from wallet.models import Wallet
+from wallet.models import Wallet, Transaction
+
 
 class WalletInitSerializer(serializers.Serializer):
     customer_xid = serializers.CharField(required=True, max_length=35)
@@ -47,5 +48,41 @@ class WalletSerializer(serializers.Serializer):
 
 class WalletPatchSerializer(serializers.Serializer):
     is_disabled = serializers.BooleanField()
+
+
+class WalletTransactionSerializer(serializers.Serializer):
+    created_by = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
+    reference_id = serializers.SerializerMethodField()
+
+    def get_created_by(self, obj):
+        return obj.created_by_id.hex
+
+    def get_status(self, obj):
+        return 'success'
+
+    def get_created_at(self, obj):
+        return obj.created_at.isoformat()
+
+    def get_reference_id(self, obj):
+        return obj.ref_id
+
+    class Meta:
+        model = Transaction
+        fields = (
+            'id',
+            'created_by',
+            'type',
+            'status',
+            'reference_id',
+            'created_at',
+            'amount'
+        )
+
+
+class WalletTransactionDepositSerializer(serializers.Serializer):
+    amount = serializers.IntegerField()
+    reference_id = serializers.UUIDField()
 
         
