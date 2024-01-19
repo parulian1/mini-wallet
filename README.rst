@@ -38,7 +38,7 @@ Local Configuration
 
       $ pip install requirement.txt
 
-8. run docker desktop or activate your docker then run docker-compose up -d (this required for running postgres).
+8. run docker desktop or activate your docker then run docker-compose up -d in terminal (this required for running postgres).
 
 9. migrate all models to database.
 
